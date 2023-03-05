@@ -1,0 +1,31 @@
+version: '3.6'
+services:
+  blog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    restart: on-failure
+    env_file:
+      - .env
+    command: ["go", "run", "main.go"]
+    depends_on:
+      - postgresdb
+    networks:
+      - app-network
+
+  postgresdb:
+    image: postgres:14.1-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=blog
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
